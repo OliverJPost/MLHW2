@@ -1,5 +1,7 @@
 import numpy as np
+import scipy
 from matplotlib import pyplot as plt
+from scipy import stats
 
 
 class PointCloud:
@@ -41,6 +43,15 @@ class PointCloud:
 
         return np.count_nonzero(grid) / (GRID_SIZE * GRID_SIZE)
 
+
+    def kolmogorov_smirnov_z(self) -> float:
+        """Calculate the normality of the z axis of the point cloud using the Kolmogorov-Smirnov test.
+        Returns:
+            ""A float between 0 and 1. 1 means that the points are normally distributed
+        """
+
+        result = stats.kstest(self.points[:, 2], 'norm')
+        return result[1]  # [1] refers to the p-value.
 
     def plot_horizontal_distribution(self):
         plt.scatter(self.points[:, 0], self.points[:, 1])
