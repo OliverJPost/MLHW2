@@ -44,14 +44,74 @@ class PointCloud:
         return np.count_nonzero(grid) / (GRID_SIZE * GRID_SIZE)
 
 
-    def kolmogorov_smirnov_z(self) -> float:
+    def kolmogorov_smirnov_xy(self) -> float:
         """Calculate the normality of the z axis of the point cloud using the Kolmogorov-Smirnov test.
         Returns:
             ""A float between 0 and 1. 1 means that the points are normally distributed
         """
+        #firstly calculate the mean of the point cloud
+        xmean = np.mean(self.points[:, 0])
+        ymean = np.mean(self.points[:, 1])
+        #then calculate the distance of each point to this mean
+        distances = np.sqrt((self.points[:, 0] - xmean)**2 + (self.points[:, 1] - ymean)**2)
+        result = stats.kstest(distances, 'norm')
+        return result[0]  # [0] refers to the test statistic, [1] refers to the p-value.
 
-        result = stats.kstest(self.points[:, 2], 'norm')
-        return result[1]  # [1] refers to the p-value.
+
+    def amount_of_points(self) -> int:
+        """Calculate the amount of points in the point cloud.
+        Returns:
+            An integer representing the amount of points in the point cloud.
+        """
+        return len(self.points)
+
+    def plot_horizontal_distribution(self):
+        plt.scatter(self.points[:, 0], self.points[:, 1])
+        plt.show()
+
+
+    def variance_xy(self) -> float:
+        """Calculate the variance of the horizontal distribution of points.
+        Returns:
+            A float representing the variance of the horizontal distribution of points.
+        """
+        return np.var(self.points[:, :2], axis=0)
+
+    def variance_z(self) -> float:
+        """Calculate the variance of the vertical distribution of points.
+        Returns:
+            A float representing the variance of the vertical distribution of points.
+        """
+        return np.var(self.points[:, 2], axis=0)
+
+
+    def kurtosis_xy(self) -> float:
+        """Calculate the kurtosis of the horizontal distribution of points.
+        Returns:
+            A float representing the kurtosis of the horizontal distribution of points.
+        """
+        return scipy.stats.kurtosis(self.points[:, :2], axis=0, fisher=False, bias=True)
+
+    def kurtosis_z(self) -> float:
+        """Calculate the kurtosis of the vertical distribution of points.
+        Returns:
+            A float representing the kurtosis of the vertical distribution of points.
+        """
+        return scipy.stats.kurtosis(self.points[:, 2], axis=0, fisher=False, bias=True)
+
+    def skew_xy(self) -> float:
+        """Calculate the skewness of the horizontal distribution of points.
+        Returns:
+            A float representing the skewness of the horizontal distribution of points.
+        """
+        return scipy.stats.skew(self.points[:, :2], axis=0, bias=True)
+
+    def skew_z(self) -> float:
+        """Calculate the skewness of the vertical distribution of points.
+        Returns:
+            A float representing the skewness of the vertical distribution of points.
+        """
+        return scipy.stats.skew(self.points[:, 2], axis=0, bias=True)
     
     def squareness(self) -> float:
         """Calculate the squareness of the bounding box of the point cloud.
@@ -121,3 +181,5 @@ class PointCloud:
         ax = fig.add_subplot(111, projection='3d')
         ax.scatter(self.points[:, 0], self.points[:, 1], self.points[:, 2])
         plt.show()
+
+
