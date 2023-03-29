@@ -6,6 +6,24 @@ from scipy import stats
 from scipy.spatial.distance import pdist, squareform
 from sklearn.neighbors import NearestNeighbors
 
+TIMING_ENABLED = False
+
+# decorator for timing
+def timeit(method):
+    if not TIMING_ENABLED:
+        return method
+
+    def timed(*args, **kw):
+        import time
+
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+
+        print(f"{method.__name__} took {te - ts:02f} seconds")
+        return result
+
+    return timed
 
 class PointCloud:
     @classmethod
@@ -72,6 +90,7 @@ class PointCloud:
         curviness_normalized = (curviness - 0) / 180
 
         return curviness_normalized
+    @timeit
     def horizontal_distribution_evenness(self) -> float:
         """Calculate the evenness of the horizontal distribution of points.
 
@@ -97,7 +116,7 @@ class PointCloud:
 
         return np.count_nonzero(grid) / (GRID_SIZE * GRID_SIZE)
 
-
+    @timeit
     def kolmogorov_smirnov_xy(self) -> float:
         """Calculate the normality of the z axis of the point cloud using the Kolmogorov-Smirnov test.
         Returns:
@@ -113,17 +132,20 @@ class PointCloud:
 
 
     def amount_of_points(self) -> int:
+    @timeit
         """Calculate the amount of points in the point cloud.
         Returns:
             An integer representing the amount of points in the point cloud.
         """
         return len(self.points)
 
+    @timeit
     def plot_horizontal_distribution(self):
         plt.scatter(self.points[:, 0], self.points[:, 1])
         plt.show()
 
 
+    @timeit
     def variance_xy(self) -> float:
         """Calculate the variance of the horizontal distribution of points.
         Returns:
@@ -131,6 +153,7 @@ class PointCloud:
         """
         return np.var(self.points[:, :2], axis=0)
 
+    @timeit
     def variance_z(self) -> float:
         """Calculate the variance of the vertical distribution of points.
         Returns:
@@ -139,6 +162,7 @@ class PointCloud:
         return np.var(self.points[:, 2], axis=0)
 
 
+    @timeit
     def kurtosis_xy(self) -> float:
         """Calculate the kurtosis of the horizontal distribution of points.
         Returns:
@@ -146,6 +170,7 @@ class PointCloud:
         """
         return scipy.stats.kurtosis(self.points[:, :2], axis=0, fisher=False, bias=True)
 
+    @timeit
     def kurtosis_z(self) -> float:
         """Calculate the kurtosis of the vertical distribution of points.
         Returns:
@@ -153,6 +178,7 @@ class PointCloud:
         """
         return scipy.stats.kurtosis(self.points[:, 2], axis=0, fisher=False, bias=True)
 
+    @timeit
     def skew_xy(self) -> float:
         """Calculate the skewness of the horizontal distribution of points.
         Returns:
@@ -160,6 +186,7 @@ class PointCloud:
         """
         return scipy.stats.skew(self.points[:, :2], axis=0, bias=True)
 
+    @timeit
     def skew_z(self) -> float:
         """Calculate the skewness of the vertical distribution of points.
         Returns:
@@ -167,6 +194,7 @@ class PointCloud:
         """
         return scipy.stats.skew(self.points[:, 2], axis=0, bias=True)
     
+    @timeit
     def squareness(self) -> float:
         """Calculate the squareness of the bounding box of the point cloud.
         Returns:
@@ -177,6 +205,7 @@ class PointCloud:
         squareness_value = np.min([x_diff,y_diff])/np.max([x_diff,y_diff])
         return squareness_value
     
+    @timeit
     def avg_distance(self) -> float:
         """Calculate the average distance from every point of the point cloud
         to every other point.
@@ -194,6 +223,7 @@ class PointCloud:
             total_distance += np.average(distance)
         return np.average(total_distance)
     
+    @timeit
     def points_per_sqm(self) -> float:
         """Calculate the average number of points per square meter of the
         area of the point cloud's bounding box.
@@ -212,6 +242,7 @@ class PointCloud:
         no_of_points = len(self.points)
         return no_of_points/area
     
+    @timeit
     def avg_height(self) -> float:
         """Calculate the average height (z values) of the points of the point
         cloud.
