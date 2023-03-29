@@ -18,6 +18,57 @@ class PointCloud:
     def __len__(self):
         return len(self.points)
 
+    def _compute_normals(self, k=10):
+        # Find the k nearest neighbors for each point
+        nbrs = NearestNeighbors(n_neighbors=k, algorithm="auto").fit(self.points)
+        distances, indices = nbrs.kneighbors(self.points)
+
+        normals = []
+
+        for idx in indices:
+            # Calculate the covariance matrix of the neighbors
+            neighbors = self.points[idx]
+            cov_matrix = np.cov(neighbors.T)
+
+            # Extract the eigenvector corresponding to the smallest eigenvalue as the normal
+            eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
+            normal = eigenvectors[:, np.argmin(eigenvalues)]
+
+            normals.append(normal)
+
+        return np.array(normals)
+
+    @timeit
+    def curviness(self, k=10):
+        normals = self._compute_normals(k)
+        nbrs = NearestNeighbors(n_neighbors=k, algorithm="auto").fit(normals)
+        distances, indices = nbrs.kneighbors(normals)
+
+        angular_diffs = []
+
+        for i, idx in enumerate(indices):
+            normal1 = normals[i]
+            neighbor_normals = normals[idx]
+            for normal2 in neighbor_normals:
+                # Compute the dot product between the two normals
+                dot_product = np.dot(normal1, normal2)
+
+                # Clamp the dot product to the range [-1, 1] to avoid numerical issues
+                dot_product = np.clip(dot_product, -1, 1)
+
+                # Compute the angular difference in radians and convert it to degrees
+                angle = np.arccos(dot_product)
+                angle_degrees = np.degrees(angle)
+
+                angular_diffs.append(angle_degrees)
+
+        # Calculate the curviness as the average of the angular differences
+        curviness = np.mean(angular_diffs)
+
+        # Normalize curviness to the range [0, 1]
+        curviness_normalized = (curviness - 0) / 180
+
+        return curviness_normalized
     def horizontal_distribution_evenness(self) -> float:
         """Calculate the evenness of the horizontal distribution of points.
 
