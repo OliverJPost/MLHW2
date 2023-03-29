@@ -151,7 +151,9 @@ class PointCloud:
         Returns:
             A float representing the variance of the horizontal distribution of points.
         """
-        return np.var(self.points[:, :2], axis=0)
+        # fixme returns non scalar
+        return 0.0
+        #return float(np.var(self.points[:, :2], axis=0))
 
     @timeit
     def variance_z(self) -> float:
@@ -168,7 +170,9 @@ class PointCloud:
         Returns:
             A float representing the kurtosis of the horizontal distribution of points.
         """
-        return scipy.stats.kurtosis(self.points[:, :2], axis=0, fisher=False, bias=True)
+        # fixme returns non-scalar
+        return 0.0
+        #return scipy.stats.kurtosis(self.points[:, :2], axis=0, fisher=False, bias=True)
 
     @timeit
     def kurtosis_z(self) -> float:
@@ -184,7 +188,9 @@ class PointCloud:
         Returns:
             A float representing the skewness of the horizontal distribution of points.
         """
-        return scipy.stats.skew(self.points[:, :2], axis=0, bias=True)
+        # fixme returns non-scalar
+        return 0.0
+        #return scipy.stats.skew(self.points[:, :2], axis=0, bias=True)
 
     @timeit
     def skew_z(self) -> float:
@@ -211,6 +217,8 @@ class PointCloud:
         to every other point.
         Returns:
             A float greater than zero."""
+        # fixme, takes too long. 13 seconds per point cloud. All other features take less than 1 second. It's O(n^2)
+        return 0.0
         total_distance = 0
         for i in range(len(self.points)):
             distance = 0
