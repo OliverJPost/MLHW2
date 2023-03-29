@@ -130,9 +130,8 @@ class PointCloud:
         result = stats.kstest(distances, 'norm')
         return result[0]  # [0] refers to the test statistic, [1] refers to the p-value.
 
-
-    def amount_of_points(self) -> int:
     @timeit
+    def amount_of_points(self) -> int:
         """Calculate the amount of points in the point cloud.
         Returns:
             An integer representing the amount of points in the point cloud.
@@ -151,8 +150,11 @@ class PointCloud:
         Returns:
             A float representing the variance of the horizontal distribution of points.
         """
-        # fixme returns non scalar
-        return 0.0
+        xmean = np.mean(self.points[:, 0])
+        ymean = np.mean(self.points[:, 1])
+        #then calculate the distance of each point to this mean
+        distances = np.sqrt((self.points[:, 0] - xmean)**2 + (self.points[:, 1] - ymean)**2)
+        return np.var(distances, axis=0)[0]
         #return float(np.var(self.points[:, :2], axis=0))
 
     @timeit
@@ -161,7 +163,7 @@ class PointCloud:
         Returns:
             A float representing the variance of the vertical distribution of points.
         """
-        return np.var(self.points[:, 2], axis=0)
+        return np.var(self.points[:, 2], axis=0)[0]
 
 
     @timeit
@@ -170,8 +172,12 @@ class PointCloud:
         Returns:
             A float representing the kurtosis of the horizontal distribution of points.
         """
-        # fixme returns non-scalar
-        return 0.0
+        xmean = np.mean(self.points[:, 0])
+        ymean = np.mean(self.points[:, 1])
+        #then calculate the distance of each point to this mean
+        distances = np.sqrt((self.points[:, 0] - xmean)**2 + (self.points[:, 1] - ymean)**2)
+        result = stats.kurtosistest(distances)
+        return result[0]
         #return scipy.stats.kurtosis(self.points[:, :2], axis=0, fisher=False, bias=True)
 
     @timeit
@@ -188,8 +194,12 @@ class PointCloud:
         Returns:
             A float representing the skewness of the horizontal distribution of points.
         """
-        # fixme returns non-scalar
-        return 0.0
+
+        xmean = np.mean(self.points[:, 0])
+        ymean = np.mean(self.points[:, 1])
+        #then calculate the distance of each point to this mean
+        distances = np.sqrt((self.points[:, 0] - xmean)**2 + (self.points[:, 1] - ymean)**2)
+        return stats.skew(distances)[0]
         #return scipy.stats.skew(self.points[:, :2], axis=0, bias=True)
 
     @timeit
@@ -198,7 +208,7 @@ class PointCloud:
         Returns:
             A float representing the skewness of the vertical distribution of points.
         """
-        return scipy.stats.skew(self.points[:, 2], axis=0, bias=True)
+        return scipy.stats.skew(self.points[:, 2], axis=0, bias=True)[0]
     
     @timeit
     def squareness(self) -> float:
