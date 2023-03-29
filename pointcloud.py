@@ -154,7 +154,7 @@ class PointCloud:
         ymean = np.mean(self.points[:, 1])
         #then calculate the distance of each point to this mean
         distances = np.sqrt((self.points[:, 0] - xmean)**2 + (self.points[:, 1] - ymean)**2)
-        return np.var(distances, axis=0)[0]
+        return np.var(distances, axis=0)
         #return float(np.var(self.points[:, :2], axis=0))
 
     @timeit
@@ -163,7 +163,7 @@ class PointCloud:
         Returns:
             A float representing the variance of the vertical distribution of points.
         """
-        return np.var(self.points[:, 2], axis=0)[0]
+        return np.var(self.points[:, 2], axis=0)
 
 
     @timeit
@@ -199,7 +199,7 @@ class PointCloud:
         ymean = np.mean(self.points[:, 1])
         #then calculate the distance of each point to this mean
         distances = np.sqrt((self.points[:, 0] - xmean)**2 + (self.points[:, 1] - ymean)**2)
-        return stats.skew(distances)[0]
+        return float(stats.skew(distances))
         #return scipy.stats.skew(self.points[:, :2], axis=0, bias=True)
 
     @timeit
@@ -208,7 +208,7 @@ class PointCloud:
         Returns:
             A float representing the skewness of the vertical distribution of points.
         """
-        return scipy.stats.skew(self.points[:, 2], axis=0, bias=True)[0]
+        return scipy.stats.skew(self.points[:, 2], axis=0, bias=True)
     
     @timeit
     def squareness(self) -> float:
