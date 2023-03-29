@@ -1,7 +1,10 @@
 import numpy as np
 import scipy
 from matplotlib import pyplot as plt
+from numpy._typing import NDArray
 from scipy import stats
+from scipy.spatial.distance import pdist, squareform
+from sklearn.neighbors import NearestNeighbors
 
 
 class PointCloud:
