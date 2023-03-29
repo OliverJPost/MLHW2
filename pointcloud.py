@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 from numpy._typing import NDArray
 from scipy import stats
 from scipy.spatial.distance import pdist, squareform
-from sklearn.neighbors import NearestNeighbors
+from sklearn.neighbors import KDTree, NearestNeighbors
 
 TIMING_ENABLED = False
 
@@ -227,19 +227,12 @@ class PointCloud:
         to every other point.
         Returns:
             A float greater than zero."""
-        # fixme, takes too long. 13 seconds per point cloud. All other features take less than 1 second. It's O(n^2)
-        return 0.0
-        total_distance = 0
-        for i in range(len(self.points)):
-            distance = 0
-            for j in range(len(self.points)):
-                x_diff = self.points[i][0] - self.points[j][0]
-                y_diff = self.points[i][1] - self.points[j][1]
-                z_diff = self.points[i][2] - self.points[j][2]
-                diff = np.sqrt(x_diff**2 + y_diff**2 + z_diff**2)
-                distance += diff
-            total_distance += np.average(distance)
-        return np.average(total_distance)
+        tree = KDTree(self.points, leaf_size=2)
+        n = len(self.points)
+        dist, ind = tree.query(self.points,k=n-1)
+        for i in range(len(dist)):
+            dist[i] = np.average(dist[i])
+        return np.average(dist)
     
     @timeit
     def points_per_sqm(self) -> float:
