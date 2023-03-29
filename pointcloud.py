@@ -267,4 +267,14 @@ class PointCloud:
         ax.scatter(self.points[:, 0], self.points[:, 1], self.points[:, 2])
         plt.show()
 
+    def compute_feature_matrix(self) -> NDArray:
+        # Gets all methods of the class that are not private, from, to, plot or compute_feature_matrix
+        methods = [
+            method
+            for method in dir(self)
+            if callable(getattr(self, method))
+            and not method.startswith(("_", "from", "to", "plot", "compute_feature_matrix"))
+        ]
 
+        results = [getattr(self, method)() for method in methods]
+        return np.array(results)
