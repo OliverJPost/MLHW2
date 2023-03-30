@@ -1,7 +1,6 @@
 import numpy as np
 
 from pointcloud import PointCloud
-import pandas as pd
 import matplotlib.pyplot as plt
 
 
