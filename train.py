@@ -1,3 +1,4 @@
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, confusion_matrix
@@ -66,3 +67,23 @@ def train_svm_rbf(train_data, train_labels):
     svm_rbf = grid_search.best_estimator_
     svm_rbf.fit(train_data, train_labels)
     return svm_rbf
+
+def train_random_forest(train_data, train_labels):
+    param_grid = {
+        'n_estimators': [10, 50, 100, 200, 500, 1000],
+        'max_depth': [None, 10, 20, 30],
+        'min_samples_split': [2, 5, 10],
+        'min_samples_leaf': [1, 2, 4],
+    }
+
+    rfc = RandomForestClassifier(random_state=42)
+    grid_search = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
+    grid_search.fit(train_data, train_labels)
+
+    print("Best hyperparameters found by grid search:")
+    print(grid_search.best_params_)
+
+    best_rf = grid_search.best_estimator_
+    best_rf.fit(train_data, train_labels)
+
+    return best_rf
