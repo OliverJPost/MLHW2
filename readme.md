@@ -7,7 +7,7 @@ In order to run the code in this repository, you will need to install the follow
 * sklearn
 
 # Running the code
-In order to run the code, you will need to open the main.ipynb file and run the cells in order. You are required to run the cells in order, as the code is dependent on the output of the previous cells.
+In order to run the code, you will need to open the main.ipynb (jupyter) notebook file and run the cells in order. You are required to run the cells in order, as the code is dependent on the output of the previous cells.
 
 To provide data to the code, you will need to place the data in a folder named "data" located in the same location as the main.ipynb file.
 The file structure required for the code to run is as follows:
