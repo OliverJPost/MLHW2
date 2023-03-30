@@ -130,6 +130,18 @@ class PointCloud:
         result = stats.kstest(distances, 'norm')
         return result[0]  # [0] refers to the test statistic, [1] refers to the p-value.
 
+    def kolmogorov_smirnov_z(self) -> float:
+        """Calculate the normality of the z axis of the point cloud using the Kolmogorov-Smirnov test.
+        Returns:
+            ""A float between 0 and 1. 1 means that the points are normally distributed
+        """
+        #firstly calculate the mean of the point cloud
+        zmean = np.mean(self.points[:, 2])
+        #then calculate the distance of each point to this mean
+        distances = np.abs(self.points[:, 2] - zmean)
+        result = stats.kstest(distances, 'norm')
+        return result[0]
+
     @timeit
     def amount_of_points(self) -> int:
         """Calculate the amount of points in the point cloud.
@@ -222,17 +234,17 @@ class PointCloud:
         return squareness_value
     
     @timeit
-    def avg_distance(self) -> float:
-        """Calculate the average distance from every point of the point cloud
-        to every other point.
-        Returns:
-            A float greater than zero."""
-        tree = KDTree(self.points, leaf_size=2)
-        n = len(self.points)
-        dist, ind = tree.query(self.points,k=n-1)
-        for i in range(len(dist)):
-            dist[i] = np.average(dist[i])
-        return np.average(dist)
+    # def avg_distance(self) -> float:
+    #     """Calculate the average distance from every point of the point cloud
+    #     to every other point.
+    #     Returns:
+    #         A float greater than zero."""
+    #     tree = KDTree(self.points, leaf_size=2)
+    #     n = len(self.points)
+    #     dist, ind = tree.query(self.points,k=n-1)
+    #     for i in range(len(dist)):
+    #         dist[i] = np.average(dist[i])
+    #     return np.average(dist)
     
     @timeit
     def points_per_sqm(self) -> float:
