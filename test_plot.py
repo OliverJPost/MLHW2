@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from sklearn.model_selection import learning_curve
+import numpy as np
 
 # 1. Import necessary libraries and functions
 
@@ -31,10 +32,10 @@ def plot_learning_curve(estimator, title, X, y, axes=None, ylim=None, cv=None, n
     return plt
 
 # 3. Calculate learning curve
-cv = 5  # Number of cross-validation folds
-train_sizes = np.linspace(0.1, 1.0, 10)  # Change this to control the granularity of the curve
-title = "Learning curve (Random Forest)"
-plot_learning_curve(best_rf, title, X_train, y_train, cv=cv, n_jobs=-1, train_sizes=train_sizes)
+# cv = 5  # Number of cross-validation folds
+# train_sizes = np.linspace(0.1, 1.0, 10)  # Change this to control the granularity of the curve
+# title = "Learning curve (Random Forest)"
+# plot_learning_curve(best_rf, title, X_train, y_train, cv=cv, n_jobs=-1, train_sizes=train_sizes)
 
 # 4. Plot learning curve
-plt.show()
+# plt.show()
